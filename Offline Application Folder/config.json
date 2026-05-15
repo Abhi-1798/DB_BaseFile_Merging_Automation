@@ -1,0 +1,7 @@
+{
+    "import_dashboard_path": "C:/Users/Admin/OneDrive - IMARC Services Private Limited/One Drive/Inorganic DB/7.1 May'26 DB Inorganic/14.May.2026- Soda Ash and Sulphate Import Data- Overall Data.xlsx",
+    "export_dashboard_path": "",
+    "base_files_folder": "C:/Users/Admin/OneDrive - IMARC Services Private Limited/One Drive/1.5 May'26 Tasks/Import",
+    "default_source_sheet": "Sheet1",
+    "default_target_sheet": "Data"
+}

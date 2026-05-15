@@ -1,0 +1,7 @@
+{
+    "import_dashboard_path": "C:/Users/Admin/Downloads/Testing DB Merging/24.Dec.2025- Soda Ash and Sulphate Import Data.xlsx",
+    "export_dashboard_path": "C:/Users/Admin/Downloads/Testing DB Merging/24.Dec.2025- Soda Ash and Sulphate Import Data.xlsx",
+    "base_files_folder": "C:/Users/Admin/Downloads/Testing DB Merging",
+    "default_source_sheet": "Sheet1",
+    "default_target_sheet": "Data"
+}

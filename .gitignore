@@ -1,0 +1,37 @@
+# ─── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ─── Virtual Environment ───────────────────────────────────
+venv/
+env/
+.venv/
+
+# ─── Large Binary / Archive Files ──────────────────────────
+*.zip
+*.tar.gz
+*.7z
+
+# ─── Offline Application - Embedded Python Runtime ─────────
+# Excluded: too large for GitHub (~397 MB)
+Offline Application Folder/python/
+
+# ─── Secrets / Local Config ────────────────────────────────
+.env
+*.env.*
+
+# ─── IDE / OS Files ────────────────────────────────────────
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ─── Logs ──────────────────────────────────────────────────
+*.log
+logs/

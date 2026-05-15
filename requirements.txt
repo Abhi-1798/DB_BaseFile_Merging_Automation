@@ -1,0 +1,7 @@
+streamlit
+pandas
+xlwings
+openpyxl
+pywin32
+python-calamine  
+ 
