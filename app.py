@@ -70,15 +70,15 @@ if 'merge_results' not in st.session_state:
 
 # --- Initialize Paths ---
 # Dynamically resolve BASE_DIR to the folder where app.py lives.
-# This ensures config.json and Column_Mapper.xlsx are always loaded
-# from the correct folder regardless of where the app is run from.
+# This ensures config.json is always loaded from the correct folder
+# regardless of where the app is run from.
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
-MAPPER_PATH = os.path.join(BASE_DIR, "Column_Mapper.xlsx")
+DEFAULT_MAPPER_PATH = os.path.join(BASE_DIR, "Column_Mapper.xlsx")
 
 # --- Load Config & Engine ---
-if not os.path.exists(CONFIG_PATH) or not os.path.exists(MAPPER_PATH):
-    st.error("Project files missing. Please run the setup scripts.")
+if not os.path.exists(CONFIG_PATH):
+    st.error("config.json is missing. Please run the setup scripts.")
     st.stop()
 
 
@@ -248,6 +248,31 @@ if st.sidebar.button(f"📂 Browse {mode} DB File…", use_container_width=True,
         cfg[db_key] = picked.replace("\\", "/")
         save_config(cfg)
         st.rerun()
+
+# ── Column Mapper File picker (Sidebar) ──────────────────────────────────────
+st.sidebar.markdown("---")
+st.sidebar.markdown("**🗺️ Column Mapper File**")
+current_mapper_path = cfg.get("mapper_file_path", "")
+if current_mapper_path and os.path.exists(current_mapper_path):
+    st.sidebar.markdown(f"📄 **{os.path.basename(current_mapper_path)}**")
+    st.sidebar.code(os.path.dirname(current_mapper_path), language="plaintext")
+elif current_mapper_path:
+    st.sidebar.warning(f"⚠️ File not found:\n`{os.path.basename(current_mapper_path)}`")
+else:
+    st.sidebar.caption("📄 *(using default Column_Mapper.xlsx)*")
+
+if st.sidebar.button("📂 Browse Mapper File…", use_container_width=True, key="sidebar_browse_mapper"):
+    picked_mapper = browse_file(title="Select Column Mapper Excel File")
+    if picked_mapper:
+        cfg["mapper_file_path"] = picked_mapper.replace("\\", "/")
+        save_config(cfg)
+        st.rerun()
+
+# Resolve effective MAPPER_PATH (custom > default)
+MAPPER_PATH = current_mapper_path if (current_mapper_path and os.path.exists(current_mapper_path)) else DEFAULT_MAPPER_PATH
+
+if not os.path.exists(MAPPER_PATH):
+    st.sidebar.error("⚠️ Column Mapper file not found. Please browse and select it.")
 
 # ── Engine ───────────────────────────────────────────────────────────────────
 # Always re-read config after potential browse updates
@@ -431,11 +456,15 @@ with tab1:
 # ── Tab 2: Column Mapper ──────────────────────────────────────────────────────
 with tab2:
     st.header("Excel Column Mapper")
-    st.success("To change mappings, open **Column_Mapper.xlsx** in Excel, edit it, and save. The app picks up changes automatically.")
-    df_map = pd.read_excel(MAPPER_PATH, sheet_name=mode)
-    st.dataframe(df_map, use_container_width=True)
-    if st.button("Open Folder to Edit Mapper"):
-        os.startfile(BASE_DIR)
+    mapper_display_name = os.path.basename(MAPPER_PATH)
+    st.success(f"To change mappings, open **{mapper_display_name}** in Excel, edit it, and save. The app picks up changes automatically.")
+    if os.path.exists(MAPPER_PATH):
+        df_map = pd.read_excel(MAPPER_PATH, sheet_name=mode)
+        st.dataframe(df_map, use_container_width=True)
+        if st.button("Open Folder to Edit Mapper"):
+            os.startfile(os.path.dirname(MAPPER_PATH))
+    else:
+        st.error("Column Mapper file not found. Please browse and select it using the sidebar or Settings tab.")
 
 # ── Tab 3: Settings ───────────────────────────────────────────────────────────
 with tab3:
@@ -501,5 +530,30 @@ with tab3:
                 st.rerun()
 
     st.divider()
-    st.markdown("**Mapping File:**")
-    st.code(MAPPER_PATH, language="plaintext")
+    st.subheader("🗺️ Column Mapper File")
+
+    mapper_path_live = cfg_live.get("mapper_file_path", "")
+    c7, c8 = st.columns([5, 1])
+    with c7:
+        st.markdown("**Column Mapper File**")
+        if mapper_path_live and os.path.exists(mapper_path_live):
+            st.code(mapper_path_live, language="plaintext")
+        elif mapper_path_live:
+            st.warning(f"⚠️ Previously set file not found:\n`{mapper_path_live}`")
+            st.caption(f"Falling back to default: `{DEFAULT_MAPPER_PATH}`")
+        else:
+            st.info(f"*(using default)* `{os.path.basename(DEFAULT_MAPPER_PATH)}`")
+            st.caption(f"Full path: `{DEFAULT_MAPPER_PATH}`")
+    with c8:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("📂 Browse…", key="settings_browse_mapper"):
+            picked_mapper = browse_file(title="Select Column Mapper Excel File")
+            if picked_mapper:
+                cfg_live["mapper_file_path"] = picked_mapper.replace("\\", "/")
+                save_config(cfg_live)
+                st.rerun()
+    if mapper_path_live:
+        if st.button("↩️ Reset to Default Mapper", key="reset_mapper"):
+            cfg_live["mapper_file_path"] = ""
+            save_config(cfg_live)
+            st.rerun()
