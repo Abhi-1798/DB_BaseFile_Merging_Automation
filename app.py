@@ -237,10 +237,12 @@ current_db_path = cfg.get(db_key, "")
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"**{mode} Dashboard File**")
 if current_db_path:
-    st.sidebar.markdown(f"📄 **{os.path.basename(current_db_path)}**")
-    st.sidebar.code(os.path.dirname(current_db_path), language="plaintext")
+    fname = os.path.basename(current_db_path)
+    fdir  = os.path.dirname(current_db_path)
+    st.sidebar.caption(f"📄 {fname}")
+    st.sidebar.caption(f"📁 `...{fdir[-30:]}` " if len(fdir) > 30 else f"📁 `{fdir}`")
 else:
-    st.sidebar.caption("📄 *(not set)*")
+    st.sidebar.caption("*(not set)*")
 
 if st.sidebar.button(f"📂 Browse {mode} DB File…", use_container_width=True, key="sidebar_browse_db"):
     picked = browse_file(title=f"Select {mode} Dashboard File")
@@ -254,12 +256,11 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("**🗺️ Column Mapper File**")
 current_mapper_path = cfg.get("mapper_file_path", "")
 if current_mapper_path and os.path.exists(current_mapper_path):
-    st.sidebar.markdown(f"📄 **{os.path.basename(current_mapper_path)}**")
-    st.sidebar.code(os.path.dirname(current_mapper_path), language="plaintext")
+    st.sidebar.caption(f"📄 {os.path.basename(current_mapper_path)}")
 elif current_mapper_path:
-    st.sidebar.warning(f"⚠️ File not found:\n`{os.path.basename(current_mapper_path)}`")
+    st.sidebar.caption(f"⚠️ Not found: {os.path.basename(current_mapper_path)}")
 else:
-    st.sidebar.caption("📄 *(using default Column_Mapper.xlsx)*")
+    st.sidebar.caption("*(using default Column_Mapper.xlsx)*")
 
 if st.sidebar.button("📂 Browse Mapper File…", use_container_width=True, key="sidebar_browse_mapper"):
     picked_mapper = browse_file(title="Select Column Mapper Excel File")
@@ -272,7 +273,7 @@ if st.sidebar.button("📂 Browse Mapper File…", use_container_width=True, key
 MAPPER_PATH = current_mapper_path if (current_mapper_path and os.path.exists(current_mapper_path)) else DEFAULT_MAPPER_PATH
 
 if not os.path.exists(MAPPER_PATH):
-    st.sidebar.error("⚠️ Column Mapper file not found. Please browse and select it.")
+    st.sidebar.caption("⚠️ Mapper file not found — please browse to select it.")
 
 # ── Engine ───────────────────────────────────────────────────────────────────
 # Always re-read config after potential browse updates
