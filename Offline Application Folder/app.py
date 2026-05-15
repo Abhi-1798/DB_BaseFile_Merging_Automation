@@ -58,6 +58,27 @@ def inject_custom_css():
             border: none;
             color: white;
         }
+
+        /* ── Remove the large empty space at the top ── */
+        [data-testid="stHeader"] {
+            height: 0 !important;
+            min-height: 0 !important;
+            visibility: hidden;
+        }
+        .block-container {
+            padding-top: 1.5rem !important;
+        }
+
+        /* ── Sidebar title: smaller, tighter ── */
+        [data-testid="stSidebar"] h3 {
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.2rem !important;
+            background: linear-gradient(90deg, #A8BFFF, #884DFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -226,7 +247,7 @@ if ($path) { Write-Output $path }
 
 
 # ── Sidebar ─────────────────────────────────────────────────────────────────
-st.sidebar.title("Project Settings")
+st.sidebar.markdown("### 🖥️ Project Settings")
 mode = st.sidebar.radio("Select Dashboard Mode", ["Export", "Import"])
 
 # Dashboard file picker (per mode)
